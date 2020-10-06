@@ -56,6 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    function getZero(num) {
+        if (num >= 0 && num < 10) {
+            return `0${num}`;
+        } else {
+            return num;
+        }
+    }
+
     function setClock(selector, endtime) {
         const timer = document.querySelector(selector);
         const days = timer.querySelector('#days');
@@ -69,10 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateClock() {
             const t = getTimeRemaining(endtime);
 
-            days.innerHTML = t.days;
-            hours.innerHTML = t.hours;
-            minutes.innerHTML = t.minutes;
-            seconds.innerHTML = t.seconds;
+            days.innerHTML = getZero(t.days);
+            hours.innerHTML = getZero(t.hours);
+            minutes.innerHTML = getZero(t.minutes);
+            seconds.innerHTML = getZero(t.seconds);
 
             if (t.total <= 0) {
                 clearInterval(timeInterval);
@@ -83,4 +91,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setClock('.timer', deadline);
+
+    //MODAL-window
+
+    const modalTrigger = document.querySelectorAll('[data-modal]'),
+        modal = document.querySelector('.modal'),
+        modalCloseBtn = document.querySelector('[data-close]');
+
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
+
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', openModal);
+    });
+
+
+    function closeModal() {
+        modal.classList.add('hide');
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal); // Закрытие на клик вне окна 
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => { // Закрытие на ексейп
+        if (e.code === 'Escape' && modal.classList.contains('show')) {
+            closeModal();
+        }
+    });
+
+    const modalTimerId = setTimeout(openModal, 20000);
+
+    function showModalByScrollEnd() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', showModalByScrollEnd);
+        }
+    }
+
+    window.addEventListener('scroll', showModalByScrollEnd);
 });
