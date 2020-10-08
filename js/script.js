@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // TIMER
-    const deadline = '2020-10-07';
+    const deadline = '2021-10-07';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date());
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('show');
         modal.classList.remove('hide');
         document.body.style.overflow = 'hidden';
-        clearInterval(modalTimerId);
+        // clearInterval(modalTimerId); 
     }
 
     modalTrigger.forEach(btn => {
@@ -131,14 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // const modalTimerId = setTimeout(openModal, 20000);
 
+    window.addEventListener('scroll', showModalByScrollEnd);
+
     function showModalByScrollEnd() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
             openModal();
             window.removeEventListener('scroll', showModalByScrollEnd);
         }
     }
-
-    window.addEventListener('scroll', showModalByScrollEnd);
 
     //CLASS for cards
 
@@ -201,5 +201,55 @@ document.addEventListener('DOMContentLoaded', () => {
         '.menu .container'
     ).render();
 
+    // FORMS - server response
 
+    const forms = document.querySelectorAll('form');
+
+    const message = {
+        loading: 'zagruzka',
+        success: 'sps skoro zvyajemsya',
+        failure: 'chto - to ne tak'
+    };
+
+    forms.forEach(item => { // Подвязываем функцию для всех форм
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const statusMessage = document.createElement('div'); // Вывод сообщения статуса
+            statusMessage.classList.add('status');
+            statusMessage.textContent = message.loading;
+            form.append(statusMessage);
+
+            const request = new XMLHttpRequest(); // создание запроса
+            request.open('POST', 'server.php');
+            request.setRequestHeader('Content-type', 'application/json'); // При использованиие XMLHttpRequest и form data заголовок не нужен
+            const formData = new FormData(form);
+
+            const object = {}; // преобразование объекта формдата в джей сон формат
+            formData.forEach((value, key) => {
+                object[key] = value;
+            });
+            const json = JSON.stringify(object);
+
+            request.send(json); // отправка 
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    statusMessage.textContent = message.success;
+                    form.reset(); // очистка введёной инфы
+                    setTimeout(() => {
+                        statusMessage.remove()
+                    }, 10000);
+                } else {
+                    statusMessage.textContent = message.failure;
+                }
+            });
+
+        });
+    }
 });
