@@ -211,15 +211,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const message = {
         loading: 'icons/veg.svg',
-        success: 'Sps skoro zvyajemsya',
-        failure: 'chto - to ne tak'
+        success: 'Спасибо, скоро свяжемся',
+        failure: 'Что то не так'
     };
 
     forms.forEach(item => { // Подвязываем функцию для всех форм
-        postData(item);
+        bindPostData(item);
     });
 
-    function postData(form) {
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+    };
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -236,20 +248,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // request.setRequestHeader('Content-type', 'application/json'); // При использованиие XMLHttpRequest и form data заголовок не нужен
             const formData = new FormData(form);
 
-            const object = {}; // преобразование объекта формдата в джей сон формат
-            formData.forEach((value, key) => {
-                object[key] = value;
-            });
+            const json = JSON.stringify(Object.fromEntries(formData.entries() ) ); // преобразование объекта формдата в джей сон формат // entries - Создаёт массивы из ключ-значение
+            // Превращает formData в 2мерный массив - потом превращаетм в обычный объект - потом в JSON
 
-
-            fetch('server.php', {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            })
-            .then(data => data.text())
+            postData('http://localhost:3000/requests', json) // сама отправка 
             .then(data => {
                 console.log(data);
                 showThanksModal(message.success);
@@ -291,13 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
-    // fetch('https://jsonplaceholder.typicode.com/posts', {
-    //     method: "POST",
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({name: "Alex"}),
-    // })
-    //     .then(response => response.json())
-    //     .then(json => console.log(json));
+    fetch('http://localhost:3000/menu')
+        .then(data => data.json())
+        .then(res => console.log(res));
 });
