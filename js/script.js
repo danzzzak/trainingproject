@@ -231,28 +231,35 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             form.append(statusMessage);
 
-            const request = new XMLHttpRequest(); // создание запроса
-            request.open('POST', 'server.php');
-            request.setRequestHeader('Content-type', 'application/json'); // При использованиие XMLHttpRequest и form data заголовок не нужен
+
+
+            // request.setRequestHeader('Content-type', 'application/json'); // При использованиие XMLHttpRequest и form data заголовок не нужен
             const formData = new FormData(form);
 
             const object = {}; // преобразование объекта формдата в джей сон формат
             formData.forEach((value, key) => {
                 object[key] = value;
             });
-            const json = JSON.stringify(object);
 
-            request.send(json); // отправка 
 
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    showThanksModal(message.success);
-                    form.reset(); // очистка введёной инфы
-                    statusMessage.remove();
-                } else {
-                    showThanksModal(message.failure);
-                }
+            fetch('server.php', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(object)
+            })
+            .then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                statusMessage.remove();
+            })
+            .catch(() => {
+                showThanksModal(message.failure);
+            })
+            .finally(() => {
+                form.reset(); // очистка введёной инфы
             });
 
         });
@@ -283,4 +290,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 4000)
 
     }
+
+    // fetch('https://jsonplaceholder.typicode.com/posts', {
+    //     method: "POST",
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({name: "Alex"}),
+    // })
+    //     .then(response => response.json())
+    //     .then(json => console.log(json));
 });
