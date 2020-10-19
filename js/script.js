@@ -180,30 +180,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        "Меню 'Фитнес'",
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        1,
-        '.menu .container'
-    ).render(); // Используется один раз
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        "Меню 'Фитнес'",
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        12,
-        '.menu .container'
-    ).render();
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        "Меню 'Фитнес'",
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        123,
-        '.menu .container'
-    ).render();
+    const getResourse = async (url) => { // получение данных 
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`cant fetch ${url}, status: ${res.status}`); // Отлавливает ошибку
+        }
+
+        return await res.json();
+    };
+
+    // getResourse('http://localhost:3000/menu')
+    //     .then(data => {
+            // data.forEach(({img, altimg, title, descr, price}) => { // Деструктиризация объекта по частям
+            //     new MenuCard(img, altimg, title, descr, price, '.menu .container').render(); // 
+    //         });
+    //     });
+
+    axios.get('http://localhost:3000/menu')
+        .then(data => {
+            data.data.forEach(({img, altimg, title, descr, price}) => { // Деструктиризация объекта по частям
+                new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+        });
+        });
 
     // FORMS - server response
 
