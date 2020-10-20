@@ -1,3 +1,5 @@
+import {getResourse} from '../services/services';
+
 function cards() {
        //CLASS for cards
 
@@ -35,29 +37,19 @@ function cards() {
         }
     }
 
-    const getResourse = async (url) => { // получение данных 
-        const res = await fetch(url);
-
-        if (!res.ok) {
-            throw new Error(`cant fetch ${url}, status: ${res.status}`); // Отлавливает ошибку
-        }
-
-        return await res.json();
-    };
-
-    // getResourse('http://localhost:3000/menu')
-    //     .then(data => {
-            // data.forEach(({img, altimg, title, descr, price}) => { // Деструктиризация объекта по частям
-            //     new MenuCard(img, altimg, title, descr, price, '.menu .container').render(); // 
-    //         });
-    //     });
-
-    axios.get('http://localhost:3000/menu')
+    getResourse('http://localhost:3000/menu')
         .then(data => {
-            data.data.forEach(({img, altimg, title, descr, price}) => { // Деструктиризация объекта по частям
-                new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+            data.forEach(({img, altimg, title, descr, price}) => { // Деструктиризация объекта по частям
+                new MenuCard(img, altimg, title, descr, price, '.menu .container').render(); // 
+            });
         });
-        });
+
+    // axios.get('http://localhost:3000/menu')
+    //     .then(data => {
+    //         data.data.forEach(({img, altimg, title, descr, price}) => { // Деструктиризация объекта по частям
+    //             new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+    //     });
+    //     });
 }
 
 export default cards;

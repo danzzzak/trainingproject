@@ -1,16 +1,16 @@
 const modal = require("./modal");
 
-function slider() {
+function slider({container, slide, nextArrow, prevArrow, totalCounter, currentCounter,wrapper, field}) {
     
-    const slides = document.querySelectorAll('.offer__slide');
-    const slider = document.querySelector('.offer__slider');
-    const prev = document.querySelector('.offer__slider-prev');
-    const next = document.querySelector('.offer__slider-next');
-    const total = document.querySelector('#total');
-    const current = document.querySelector('#current');
-    const slidesWrapper = document.querySelector('.offer__slider-wrapper');
-    const slidesField = document.querySelector('.offer__slider-inner');
-    const width = window.getComputedStyle(slidesWrapper).width;
+    const slides = document.querySelectorAll(slide),
+        slider = document.querySelector(container),
+        prev = document.querySelector(prevArrow),
+        next = document.querySelector(nextArrow),
+        total = document.querySelector(totalCounter),
+        current = document.querySelector(currentCounter),
+        slidesWrapper = document.querySelector(wrapper),
+        width = window.getComputedStyle(slidesWrapper).width,
+        slidesField = document.querySelector(field);
     let slideIndex = 1;
     let offset = 0;
 
